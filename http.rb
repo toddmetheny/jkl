@@ -1,5 +1,7 @@
 require 'socket'
 require 'uri'
+require 'net/http'
+require 'sqlite3'
 
 WEB_ROOT = './public'
 
@@ -7,7 +9,8 @@ CONTENT_TYPE_MAPPING = {
   'html' => 'text/html',
   'txt' => 'text/plain',
   'png' => 'image/png',
-  'jpg' => 'image/jpeg'
+  'jpg' => 'image/jpeg',
+  'erb' => 'text/erb'
 }
 
 DEFAULT_CONTENT_TYPE = 'application/octetstream'
@@ -71,8 +74,8 @@ loop do
     socket.print message
   end
 
-  # response = "Hello World!\n"
-
   # socket.print response
   socket.close
 end
+
+
