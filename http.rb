@@ -6,6 +6,7 @@ require 'sqlite3'
 uri = URI('http://localhost:2345')
 res = Net::HTTP.get_response(uri)
 res['Set-Cookie']
+res.get_fields('set-cookie')
 puts "Headers: #{res.to_hash.inspect}"
 
 
