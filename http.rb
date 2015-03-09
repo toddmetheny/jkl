@@ -3,14 +3,15 @@ require 'uri'
 require 'net/http'
 require 'sqlite3'
 require './data'
+# require './insert'
 
-DB = SQLite3::Database.new ":memory:"
+# DB = SQLite3::Database.new ":memory:"
 
 uri = URI('http://localhost:2345')
-res = Net::HTTP.get_response(uri)
-res['Set-Cookie']
-res.get_fields('set-cookie')
-puts "Headers: #{res.to_hash.inspect}"
+# res = Net::HTTP.get_response(uri)
+# res['Set-Cookie']
+# res.get_fields('set-cookie')
+# puts "Headers: #{res.to_hash.inspect}"
 
 
 WEB_ROOT = './public'
