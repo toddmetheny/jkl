@@ -1,7 +1,7 @@
-require 'cgi'
+# require 'cgi'
 
-cgi = CGI.new
+# cgi = CGI.new
 
-value = cgi['tweet']
+# value = cgi['tweet']
 
-puts value
+# puts value

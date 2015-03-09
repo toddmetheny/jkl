@@ -3,6 +3,12 @@ require 'uri'
 require 'net/http'
 require 'sqlite3'
 
+uri = URI('http://localhost:2345')
+res = Net::HTTP.get_response(uri)
+res['Set-Cookie']
+puts "Headers: #{res.to_hash.inspect}"
+
+
 WEB_ROOT = './public'
 
 CONTENT_TYPE_MAPPING = {
@@ -77,5 +83,6 @@ loop do
   # socket.print response
   socket.close
 end
+
 
 
