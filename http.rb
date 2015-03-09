@@ -2,6 +2,9 @@ require 'socket'
 require 'uri'
 require 'net/http'
 require 'sqlite3'
+require './data'
+
+DB = SQLite3::Database.new ":memory:"
 
 uri = URI('http://localhost:2345')
 res = Net::HTTP.get_response(uri)

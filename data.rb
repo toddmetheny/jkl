@@ -1,5 +1,5 @@
 begin
-  db = SQLite3::Database.open "test.db"
+  db = SQLite3::Database.open("test.sqlite")
   db.execute "CREATE TABLE IF NOT EXISTS Tweets(Id INTEGER PRIMARY KEY, 
         Description TEXT)"
   db.execute "INSERT INTO Tweets VALUES(1,'This is a tweet')"
