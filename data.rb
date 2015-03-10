@@ -1,3 +1,12 @@
+require 'cgi'
+
+# cgi = CGI.new
+# cgi = CGI.new
+# puts cgi.header
+# h = cgi.params
+# puts h
+# h['tweet']
+
 begin
   db = SQLite3::Database.open("test.sqlite")
   db.execute "CREATE TABLE IF NOT EXISTS Tweets(Id INTEGER PRIMARY KEY, 

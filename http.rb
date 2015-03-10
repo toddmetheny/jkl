@@ -2,6 +2,7 @@ require 'socket'
 require 'uri'
 require 'net/http'
 require 'sqlite3'
+require 'cgi'
 require './data'
 # require './insert'
 
@@ -13,6 +14,8 @@ uri = URI('http://localhost:2345')
 # res.get_fields('set-cookie')
 # puts "Headers: #{res.to_hash.inspect}"
 
+# res = Net::HTTP.post_form(uri, 'q' => 'ruby', 'max' => '50')
+# puts res.body
 
 WEB_ROOT = './public'
 
@@ -33,8 +36,14 @@ end
 
 def requested_file(request_line)
   request_uri = request_line.split(" ")[1]
+  # request_uri2 = request_line.split(" ")[2]
+  # request_uri3 = request_line.split(" ")[3]
   path = URI.unescape(URI(request_uri).path)
+  # path2 = URI.unescape(URI(request_uri2).path)
+  # path3 = URI.unescape(URI(request_uri3).path)
   clean = []
+  # path2 = "/index.htm"
+  # request = "GET #{path} HTTP/1.0\r\n\r\n"
 
   # # Split the path into components
   parts = path.split("/")
@@ -88,6 +97,8 @@ loop do
   # socket.print response
   socket.close
 end
+
+
 
 
 
