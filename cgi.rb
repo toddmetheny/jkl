@@ -1,6 +1,28 @@
 require 'uri'
 # require 'net/http'
 require 'httparty'
+
+require './http.rb'
+
+class Test < SimpleServer
+  def return_responses
+    response = HTTParty.get('http://localhost:2345/index.html')
+    p response.body
+    p response.code 
+    p response.message
+    p response.headers.inspect
+  end
+
+  def return_username
+    puts @login_user
+  end
+end
+
+test = Test.new
+test.return_username
+# test.return_responses
+
+
 # uri = URI.parse('http://localhost:2345')
 # http = Net::HTTP.new(uri.host, uri.port)
 
@@ -35,10 +57,10 @@ require 'httparty'
 # # # require 'net/http'
 # require 'httparty'
 # require 'cgi'
-require 'webrick'
-require 'stringio'
+# require 'webrick'
+# require 'stringio'
 
-uri = URI('http://localhost:2345')
+# uri = URI('http://localhost:2345')
 # # cgi = CGI.new
 # # p cgi['Tweet']
 
@@ -68,12 +90,6 @@ uri = URI('http://localhost:2345')
 
 
 
-# # # def return_responses
-response = HTTParty.get('http://localhost:2345/index.html')
-p response.body
-p response.code 
-p response.message
-p response.headers.inspect
 
 # w = WEBrick::HTTPRequest.request_uri
 # p w

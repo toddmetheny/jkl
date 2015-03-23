@@ -7,6 +7,8 @@ require 'webrick'
 require 'stringio'
 require 'pry'
 
+class SimpleServer
+
   WEB_ROOT = './public'
 
   CONTENT_TYPE_MAPPING = {
@@ -47,58 +49,86 @@ require 'pry'
     File.join(WEB_ROOT, *clean)
   end
 
-  server = TCPServer.new('localhost', 2345)
+  def run_server
+    server = TCPServer.new('localhost', 2345)
 
-  loop do 
-    socket = server.accept
-    puts "hi"
+    loop do 
+      socket = server.accept
 
-    line_array = []
+      request_line = socket.gets
+      # STDERR.puts request_line
+      # puts "hi"
 
-    while(line = socket.gets) != "\r\n"
-      line_array << line
-    end
+      line_array = []
 
-    first_line = line_array.shift
-    http_method = first_line.split(' ')[0]
-    request_path = first_line.split(' ')[1]
+      while(line = socket.gets) != "\r\n"
+        line_array << line
+      end
 
-    headers = line_array.inject({}) do |h, line|
-      key, val = line.split(": ")
-      h.merge(key => val.strip)
-    end
+      first_line = line_array.shift
+      http_method = first_line.split(' ')[0]
+      request_path = first_line.split(' ')[1]
 
-    binding.pry
+      headers = line_array.inject({}) do |h, line|
+        key, val = line.split(": ")
+        h.merge(key => val.strip)
+      end
 
-    # path = requested_file(request_line)
+      path = requested_file(request_line)
 
-    path = File.join(path, 'index.html') if File.directory?(path)
-    puts path
+      path = File.join(path, 'index.html') if File.directory?(path)
+      # puts path
 
-    if File.exist?(path) && !File.directory?(path)
-      File.open(path, "r+") do |file|
-        socket.print "HTTP/1.1 200 OK\r\n" +
-                     "Content-Type: #{content_type(file)}\r\n" +
-                     "Content-Length: #{file.size}\r\n" +
+      if File.exist?(path) && !File.directory?(path)
+        File.open(path, "r+") do |file|
+          socket.print "HTTP/1.1 200 OK\r\n" +
+                       "Content-Type: #{content_type(file)}\r\n" +
+                       "Content-Length: #{file.size}\r\n" +
+                       "Connection: close\r\n"
+
+          socket.print "\r\n"
+
+          IO.copy_stream(file, socket)
+          @login_user = CGI.parse(socket.read)
+
+          # puts @login_user["username"]
+          # puts headers["Cookie"] 
+
+          begin
+            db = SQLite3::Database.open("test.sqlite")
+            # db.execute "DROP TABLE IF EXISTS Tweets"
+            db.execute "CREATE TABLE IF NOT EXISTS Tweets(Id INTEGER PRIMARY KEY, Description TEXT)"
+            # # db.execute "INSERT INTO Tweets VALUES(1,'This is a tweet')"
+            db.execute("INSERT INTO Tweets (Description) VALUES(?)", @login_user["username"])
+            puts @login_user["username"]
+          rescue SQLite3::Exception => e 
+            puts "Exception occurred"
+            puts e  
+          ensure
+            db.close if db
+          end  
+        end
+      else
+        message = "File not found\n"
+        socket.print "HTTP/1.1 404 Not Found\r\n" +
+                     "Content-Type: text/plain\r\n" +
+                     "Content-Length: #{message.size}\r\n" +
                      "Connection: close\r\n"
 
         socket.print "\r\n"
 
-        IO.copy_stream(file, socket)
+        socket.print message
       end
-    else
-      message = "File not found\n"
-      socket.print "HTTP/1.1 404 Not Found\r\n" +
-                   "Content-Type: text/plain\r\n" +
-                   "Content-Length: #{message.size}\r\n" +
-                   "Connection: close\r\n"
-
-      socket.print "\r\n"
-
-      socket.print message
+      socket.close
     end
-    socket.close
   end
+end
+
+
+
+server1 = SimpleServer.new 
+server1.run_server()
+
 
 
 
