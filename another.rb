@@ -127,6 +127,7 @@ class Server
 
       while(line = @socket.gets) != "\r\n"
         line_array << line
+        puts line
       end
 
       parse_headers(@socket, line_array)
@@ -136,7 +137,7 @@ class Server
 
       # open index page
       if File.exist?(path) && !File.directory?(path)
-        Session.set_cookie(@socket, path)
+        sesh = Session.set_cookie(@socket, path)
       else
         message = "File not found\n"
         @socket.print "HTTP/1.1 404 Not Found\r\n" +
@@ -164,6 +165,7 @@ class Session < Server
                    "Content-Type: #{Server.content_type(file)}\r\n" +
                    "Content-Length: #{file.size}\r\n" +
                    "Set-Cookie: __kwipper_user=#{@user}; expires=0; username=#{@user}\r\n" +
+                   "Location: http://localhost:2345/logout.html"
                    "Connection: close\r\n"
 
       socket.print "\r\n"
